@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Feliz Dia de las Cartas de Amor</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Quicksand:wght@300;400;600&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
+    <style>
+        /* Variables y fuente base */
+        :root {
+            --cover-bg: #8b1c31;
+            --page-bg: #fffdf5;
+            --gold: #d4af37;
+        }
+
+        body {
+            font-family: 'Quicksand', sans-serif;
+            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+            overflow: hidden;
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* Luces flotantes (Luciérnagas) */
+        .firefly {
+            position: absolute;
+            background: rgba(255, 215, 0, 0.6);
+            border-radius: 50%;
+            box-shadow: 0 0 10px rgba(255, 215, 0, 0.8), 0 0 20px rgba(255, 215, 0, 0.6);
+            pointer-events: none;
+            animation: floatup linear infinite;
+        }
+
+        @keyframes floatup {
+            0% { transform: translateY(100vh) scale(0); opacity: 0; }
+            50% { opacity: 1; }
+            100% { transform: translateY(-10vh) scale(1.5); opacity: 0; }
+        }
+
+        /* Estructura del Libro/Tarjeta 3D */
+        .book-container {
+            perspective: 1800px; /* Crea el espacio 3D */
+            z-index: 10;
+        }
+
+        .book {
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 0.5s;
+        }
+
+        /* Páginas */
+        .page {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border-radius: 4px 15px 15px 4px;
+            box-shadow: 5px 10px 20px rgba(0,0,0,0.4);
+        }
+
+        /* La Portada (se mueve) */
+        .cover-page {
+            z-index: 3;
+            transform-origin: left center;
+            transition: transform 1.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+            transform-style: preserve-3d;
+        }
+
+        /* Cara frontal y trasera de las páginas */
+        .face {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden; /* Oculta la parte de atrás al girar */
+            border-radius: 4px 15px 15px 4px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            overflow: hidden;
+        }
+
+        /* Diseños específicos de las caras */
+        .cover-front {
+            background-color: var(--cover-bg);
+            background-image: url('data:image/svg+xml;utf8,<svg width="40" height="40" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg"><path d="M20 20.5V18H0v-2h20v-2.5L25 17l-5 3.5z" fill="rgba(255,255,255,0.05)"/></svg>');
+            border: 2px solid var(--gold);
+            cursor: pointer;
+        }
+
+        .cover-back {
+            background-color: var(--page-bg);
+            transform: rotateY(180deg);
+            border-right: 1px solid #ccc;
+        }
+
+        .inside-page {
+            background-color: var(--page-bg);
+            z-index: 1;
+        }
+
+        /* Decoraciones */
+        .gold-border {
+            border: 2px dashed var(--gold);
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+        }
+
+        .title-font {
+            font-family: 'Great Vibes', cursive;
+        }
+
+        /* Lomo del libro */
+        .spine {
+            position: absolute;
+            left: -15px;
+            top: 0;
+            width: 30px;
+            height: 100%;
+            background: linear-gradient(to right, #5a111f, var(--cover-bg), #5a111f);
+            transform: rotateY(-90deg);
+            transform-origin: right center;
+            border-radius: 5px 0 0 5px;
+        }
+
+        /* Animación de apertura */
+        .book.is-open .cover-page {
+            transform: rotateY(-155deg);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+        }
+
+        .book.is-open {
+            transform: translateX(25%); /* Centra el libro abierto */
+        }
+
+        @media (max-width: 640px) {
+            .book.is-open {
+                transform: translateX(10%); /* Ajuste para móviles */
+            }
+        }
+
+        /* Efecto de latido */
+        .heart-pulse {
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        .cursor {
+            display: inline-block;
+            width: 2px;
+            height: 1em;
+            background-color: #333;
+            animation: blink 0.7s infinite;
+            vertical-align: middle;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+
+        /* Instrucciones animadas */
+        .hint {
+            position: absolute;
+            bottom: -50px;
+            width: 100%;
+            text-align: center;
+            color: rgba(255,255,255,0.8);
+            font-size: 0.9rem;
+            animation: bounce 2s infinite;
+            transition: opacity 0.5s;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-10px); }
+            60% { transform: translateY(-5px); }
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <audio id="bg-music" loop>
+        <source src="./tiAmo.mp3" type="audio/mpeg">
+    </audio>
+
+    <!-- Contenedor de partículas de fondo generadas por JS -->
+    <div id="fireflies" class="absolute inset-0 z-0 overflow-hidden pointer-events-none"></div>
+
+    <div class="book-container w-72 h-96 sm:w-80 sm:h-[28rem]">
+        <div class="book w-full h-full" id="love-book">
+            
+            <!-- Lomo decorativo -->
+            <div class="spine"></div>
+
+            <!-- Página Interior (Derecha) donde va el texto -->
+            <div class="page inside-page shadow-xl">
+                <div class="face">
+                    <div class="gold-border p-4 text-center">
+                        <h2 class="title-font text-3xl sm:text-4xl text-rose-800 mb-4 opacity-0 transition-opacity duration-1000 delay-500" id="inside-title">
+                            Mi amor eterno
+                        </h2>
+                        <!-- Contenedor para el efecto de máquina de escribir -->
+                        <div class="text-left w-full h-full text-gray-700 text-sm sm:text-base leading-relaxed overflow-y-auto pr-1">
+                            <span id="typed-text"></span><span class="cursor hidden" id="cursor"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Portada (Gira en el eje Y) -->
+            <div class="page cover-page" id="cover">
+                <!-- Parte de afuera de la portada -->
+                <div class="face cover-front shadow-[inset_0_0_20px_rgba(0,0,0,0.5)]">
+                    <div class="gold-border flex flex-col items-center justify-center p-6 text-center bg-black/10 backdrop-blur-sm">
+                        <div class="text-yellow-500 text-5xl mb-4 heart-pulse">✨</div>
+                        <h1 class="title-font text-4xl sm:text-5xl text-yellow-400 mb-2 drop-shadow-lg">Para Ti</h1>
+                        <p class="text-yellow-200/80 text-sm tracking-widest uppercase mt-4">Un mensaje especial</p>
+                    </div>
+                    <div class="hint" id="hint-text">Toca para abrir</div>
+                </div>
+
+                <!-- Parte de adentro de la portada (Izquierda) -->
+                <div class="face cover-back">
+                    <div class="gold-border p-4 flex flex-col items-center justify-center">
+                        <div class="w-32 h-32 sm:w-40 sm:h-40 rounded-full border-4 border-rose-200 shadow-inner flex items-center justify-center bg-rose-50 mb-6">
+                            <span class="text-6xl heart-pulse">❤️</span>
+                        </div>
+                        <p class="title-font text-2xl text-rose-600 text-center">
+                            "Eres mi coincidencia favorita."
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Controles flotantes -->
+    <div class="fixed bottom-4 right-4 z-50 flex gap-2">
+        <button id="music-toggle" class="bg-white/10 hover:bg-white/20 backdrop-blur-md text-white rounded-full p-3 shadow-lg border border-white/20 transition-all hidden">
+            <svg id="icon-play" class="w-6 h-6 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+            <svg id="icon-pause" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 9v6m4-6v6m7-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+        </button>
+    </div>
+
+    <script>
+        // El texto que se escribirá automáticamente
+        const cartaTexto = "Hoy, en el Día de las Cartas de Amor, quería recordarte lo increíblemente especial que eres para mí.\n\nDesde que llegaste a mi vida, cada día tiene un color diferente. Me haces reír, me das paz y me inspiras a ser mejor.\n\nGracias por ser mi refugio y mi persona favorita en el mundo. Te quiero muchísimo.\n\nSiempre tuyo/a.";
+        
+        $(document).ready(function() {
+            // Generar luciérnagas de fondo
+            const numFireflies = 30;
+            const container = $('#fireflies');
+            for(let i = 0; i < numFireflies; i++) {
+                let size = Math.random() * 4 + 2; // entre 2 y 6 px
+                let left = Math.random() * 100; // 0 a 100 vw
+                let duration = Math.random() * 10 + 5; // 5 a 15 segundos
+                let delay = Math.random() * 5; // 0 a 5 segundos de retraso
+                
+                let firefly = $('<div class="firefly"></div>').css({
+                    width: size + 'px',
+                    height: size + 'px',
+                    left: left + 'vw',
+                    animationDuration: duration + 's',
+                    animationDelay: delay + 's'
+                });
+                container.append(firefly);
+            }
+
+            let isOpen = false;
+            let isTyping = false;
+            const audio = document.getElementById('bg-music');
+            audio.volume = 0.4; // Volumen suave
+
+            // Función para efecto máquina de escribir
+            function typeWriter(text, i, fnCallback) {
+                if (i < (text.length)) {
+                    // Reemplazar saltos de línea con <br>
+                    let char = text.charAt(i) === '\n' ? '<br><br>' : text.charAt(i);
+                    $('#typed-text').append(char);
+                    
+                    // Velocidad aleatoria para simular escritura real
+                    let randomSpeed = Math.floor(Math.random() * (70 - 30 + 1)) + 30;
+                    
+                    setTimeout(function() {
+                        typeWriter(text, i + 1, fnCallback)
+                    }, randomSpeed);
+                } else if (typeof fnCallback == 'function') {
+                    setTimeout(fnCallback, 700);
+                }
+            }
+
+            // Click en la tarjeta
+            $('#cover').click(function() {
+                if (!isOpen) {
+                    // 1. Abrir libro
+                    $('#love-book').addClass('is-open');
+                    $('#hint-text').fadeOut();
+                    
+                    // 2. Reproducir música
+                    audio.play().catch(e => console.log("Audio bloqueado por el navegador", e));
+                    $('#music-toggle').fadeIn().removeClass('hidden');
+
+                    // 3. Mostrar título interno e iniciar escritura
+                    setTimeout(() => {
+                        $('#inside-title').removeClass('opacity-0');
+                        $('#cursor').removeClass('hidden');
+                        
+                        if(!isTyping) {
+                            isTyping = true;
+                            // Iniciar el efecto de escritura después de que el título aparece
+                            setTimeout(() => {
+                                typeWriter(cartaTexto, 0, function() {
+                                    $('#cursor').removeClass('animation').css('opacity', 0); // Ocultar cursor al terminar
+                                });
+                            }, 500);
+                        }
+                    }, 800); // Esperar a que la tarjeta se abra
+                    
+                    isOpen = true;
+                } else {
+                    // Cerrar libro
+                    $('#love-book').removeClass('is-open');
+                    isOpen = false;
+                }
+            });
+
+            // Control de música manual
+            $('#music-toggle').click(function() {
+                if (!audio.paused) {
+                    audio.pause();
+                    $('#icon-pause').addClass('hidden');
+                    $('#icon-play').removeClass('hidden');
+                } else {
+                    audio.play();
+                    $('#icon-play').addClass('hidden');
+                    $('#icon-pause').removeClass('hidden');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
